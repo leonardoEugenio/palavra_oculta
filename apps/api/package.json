@@ -1,0 +1,24 @@
+{
+  "name": "@po/api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "lint": "eslint .",
+    "db:up": "docker compose -f infra/docker-compose.yml up -d",
+    "db:down": "docker compose -f infra/docker-compose.yml down",
+    "db:logs": "docker compose -f infra/docker-compose.yml logs -f"
+  },
+  "dependencies": {
+    "@fastify/websocket": "^10.0.1",
+    "dotenv": "^16.4.5",
+    "fastify": "^4.29.1",
+    "pg": "^8.11.5"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.1",
+    "typescript": "^5.4.5"
+  }
+}
