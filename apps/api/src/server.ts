@@ -1,9 +1,12 @@
-import Fastify from 'fastify'
+import { app } from './app.js'
 
-const app = Fastify()
+const PORT = Number(process.env.PORT) || 3333
 
-app.get('/health', async () => {
-  return { ok: true }
-})
-
-app.listen({ port: 3333 })
+app.listen({ port: PORT, host: '0.0.0.0' })
+  .then(() => {
+    console.log(`🚀 Server running on port ${PORT}`)
+  })
+  .catch((err) => {
+    console.error(err)
+    process.exit(1)
+  })
