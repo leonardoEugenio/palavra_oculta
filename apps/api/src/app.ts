@@ -11,6 +11,8 @@ import {
   ZodTypeProvider,
 } from 'fastify-type-provider-zod'
 
+import authRegisterUserRoute from './routes/auth/register-user'
+
 export function buildApp () {
   const app = Fastify().withTypeProvider<ZodTypeProvider>()
   app.setValidatorCompiler(validatorCompiler)
@@ -32,6 +34,8 @@ export function buildApp () {
   app.register(ScalarApiReference, {
     routePrefix: '/docs',
   })
+
+  app.register(authRegisterUserRoute)
 
   return app
 }
