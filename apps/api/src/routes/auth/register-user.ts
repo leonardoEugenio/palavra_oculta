@@ -8,7 +8,12 @@ export default async function authRegisterUserRoute (app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
     '/auth/register',
     {
+      config: {
+        auth: false,
+      },
       schema: {
+        tags: ['Auth'],
+
         body: z.object({
           userName: z.string().min(3),
           email: z.string().email(),

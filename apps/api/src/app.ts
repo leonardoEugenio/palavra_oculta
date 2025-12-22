@@ -11,8 +11,11 @@ import {
   ZodTypeProvider,
 } from 'fastify-type-provider-zod'
 
+import authHook from './hooks/auth'
+
 import authRegisterUserRoute from './routes/auth/register-user'
 import authLoginRoute from './routes/auth/login'
+import authMeRoute from './routes/auth/me'
 
 export function buildApp () {
   const app = Fastify().withTypeProvider<ZodTypeProvider>()
@@ -36,8 +39,11 @@ export function buildApp () {
     routePrefix: '/docs',
   })
 
+  app.register(authHook)
+
   app.register(authRegisterUserRoute)
   app.register(authLoginRoute)
+  app.register(authMeRoute)
 
   return app
 }
