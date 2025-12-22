@@ -12,6 +12,7 @@ import {
 } from 'fastify-type-provider-zod'
 
 import authRegisterUserRoute from './routes/auth/register-user'
+import authLoginRoute from './routes/auth/login'
 
 export function buildApp () {
   const app = Fastify().withTypeProvider<ZodTypeProvider>()
@@ -36,6 +37,7 @@ export function buildApp () {
   })
 
   app.register(authRegisterUserRoute)
+  app.register(authLoginRoute)
 
   return app
 }
