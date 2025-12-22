@@ -3,7 +3,10 @@ import tsParser from '@typescript-eslint/parser'
 import tsPlugin from '@typescript-eslint/eslint-plugin'
 
 export default [
-  // Configuração base para arquivos TypeScript
+  ...neostandard({
+    files: ['**/*.{js,ts,tsx}'],
+  }),
+
   {
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
@@ -11,20 +14,33 @@ export default [
       parserOptions: {
         sourceType: 'module',
         ecmaVersion: 'latest',
-        project: 'apps/api/tsconfig.json',
+        project: './apps/api/tsconfig.json',
       },
     },
     plugins: {
       '@typescript-eslint': tsPlugin,
     },
+    rules: {
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          ignoreRestSiblings: true,
+        },
+      ],
+    },
   },
 
-  // Aplicar neostandard DEPOIS da configuração do parser
-  ...neostandard({
-    files: ['**/*.{js,ts,tsx}'],
-  }),
+  {
+    files: ['**/*.d.ts', '**/types/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'off',
+      'no-unused-vars': 'off',
+    },
+  },
 
-  // Configuração específica para o app web
   {
     files: ['apps/web/**/*.{ts,tsx}'],
     languageOptions: {
@@ -34,6 +50,9 @@ export default [
         ecmaVersion: 'latest',
         project: './apps/web/tsconfig.json',
       },
+    },
+    plugins: {
+      '@typescript-eslint': tsPlugin,
     },
   },
 

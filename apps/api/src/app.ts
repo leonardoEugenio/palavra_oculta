@@ -2,6 +2,7 @@ import Fastify from 'fastify'
 import swagger from '@fastify/swagger'
 import cors from '@fastify/cors'
 import ScalarApiReference from '@scalar/fastify-api-reference'
+import postgresPlugin from './plugins/postgres'
 
 import {
   serializerCompiler,
@@ -12,9 +13,9 @@ import {
 
 export function buildApp () {
   const app = Fastify().withTypeProvider<ZodTypeProvider>()
-
   app.setValidatorCompiler(validatorCompiler)
   app.setSerializerCompiler(serializerCompiler)
+  app.register(postgresPlugin)
 
   app.register(cors)
 
