@@ -1,12 +1,7 @@
-import { app } from './app.js'
+import { buildApp } from './app'
 
-export const PORT = Number(process.env.PORT) || 3333
+const app = buildApp()
 
-app.listen({ port: PORT, host: '0.0.0.0' })
-  .then(() => {
-    console.log(`🚀 Server running on port ${PORT}`)
-  })
-  .catch((err) => {
-    console.error(err)
-    process.exit(1)
-  })
+app.listen({ port: 3333, host: '0.0.0.0' }).then(() => {
+  console.log('🚀 Server running on http://localhost:3333')
+})

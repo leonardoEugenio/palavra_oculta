@@ -1,11 +1,36 @@
 import Fastify from 'fastify'
-import { databasePlugin } from './plugins/database.js'
-import swaggerPlugin from './plugins/swagger.js'
+import swagger from '@fastify/swagger'
+import cors from '@fastify/cors'
+import ScalarApiReference from '@scalar/fastify-api-reference'
 
-export const app = Fastify({
-  logger: true
-})
+import {
+  serializerCompiler,
+  validatorCompiler,
+  jsonSchemaTransform,
+  ZodTypeProvider,
+} from 'fastify-type-provider-zod'
 
-// Plugins
-app.register(databasePlugin)
-app.register(swaggerPlugin)
+export function buildApp () {
+  const app = Fastify().withTypeProvider<ZodTypeProvider>()
+
+  app.setValidatorCompiler(validatorCompiler)
+  app.setSerializerCompiler(serializerCompiler)
+
+  app.register(cors)
+
+  app.register(swagger, {
+    openapi: {
+      info: {
+        title: 'Palavra Oculta API',
+        version: '1.0.0',
+      },
+    },
+    transform: jsonSchemaTransform,
+  })
+
+  app.register(ScalarApiReference, {
+    routePrefix: '/docs',
+  })
+
+  return app
+}

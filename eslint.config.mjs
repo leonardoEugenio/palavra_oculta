@@ -1,27 +1,42 @@
 import neostandard from 'neostandard'
+import tsParser from '@typescript-eslint/parser'
+import tsPlugin from '@typescript-eslint/eslint-plugin'
 
 export default [
-  // ==========================
-  // Base (Node + TypeScript)
-  // ==========================
+  // Configuração base para arquivos TypeScript
+  {
+    files: ['**/*.{ts,tsx}'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        sourceType: 'module',
+        ecmaVersion: 'latest',
+        project: 'apps/api/tsconfig.json',
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tsPlugin,
+    },
+  },
+
+  // Aplicar neostandard DEPOIS da configuração do parser
   ...neostandard({
     files: ['**/*.{js,ts,tsx}'],
   }),
 
-  // ==========================
-  // Next.js (somente WEB)
-  // ==========================
-  ...neostandard({
-    files: ['apps/web/**/*.{js,jsx,ts,tsx}'],
-    extends: [
-      '@rocketseat/eslint-config/next',
-      'next/core-web-vitals',
-    ],
-  }),
+  // Configuração específica para o app web
+  {
+    files: ['apps/web/**/*.{ts,tsx}'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        sourceType: 'module',
+        ecmaVersion: 'latest',
+        project: './apps/web/tsconfig.json',
+      },
+    },
+  },
 
-  // ==========================
-  // Ignorar lixo
-  // ==========================
   {
     ignores: [
       '**/node_modules/**',
