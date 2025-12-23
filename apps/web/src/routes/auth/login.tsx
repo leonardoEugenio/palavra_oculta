@@ -1,9 +1,12 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
+import { postLogin } from '@/integrations/api/client/auth/post-login'
+import { useState } from 'react'
+import { setCookie } from 'nookies'
 
 export const Route = createFileRoute('/auth/login')({
   component: RouteComponent,
@@ -14,7 +17,39 @@ const formLoginSchema = z.object({
   password: z.string().min(8, 'Senha muito curta'),
 })
 
+async function onSubmitLogin ({ email, password }: z.infer<typeof formLoginSchema>) {
+  const response = await postLogin({ email, password }).catch((error) => {
+    return {
+      message: error.message,
+      status: error.status,
+    }
+  })
+
+  if (response.status !== 200) {
+    return {
+      success: false,
+      message: 'Acesso negado, verifique seu e-mail e senha',
+    }
+  }
+
+  if ('data' in response) {
+    return {
+      success: true,
+      message: 'Login realizado com sucesso',
+      data: response.data,
+    }
+  }
+
+  return {
+    success: false,
+    message: 'Não foi possível realizar o login',
+  }
+}
+
 function RouteComponent () {
+  const navigate = useNavigate()
+
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const form = useForm({
     defaultValues: {
       email: '',
@@ -23,10 +58,30 @@ function RouteComponent () {
     validators: {
       onChange: formLoginSchema,
     },
-    onSubmit: (values) => {
-      console.log(values)
+    onSubmit: async (form) => {
+      const response = await onSubmitLogin(form.value)
+
+      console.log(!response.success || !response.data)
+
+      if (!response.success || !response.data) {
+        setErrorMessage(response.message ?? 'Ocorreu um erro ao realizar o login')
+        return
+      }
+
+      setErrorMessage(null)
+
+      setCookie(null, 'accessToken', response.data.accessToken, {
+        path: '/',
+        maxAge: 60 * 60 * 24 * 30,
+      })
+
+      navigate({
+        to: '/roons',
+        replace: true,
+      })
     },
   })
+
   return (
     <section className='w-screen h-screen flex items-center justify-center bg-background'>
       <main className='p-8 w-full max-w-lg'>
@@ -91,10 +146,16 @@ function RouteComponent () {
               )}
             </form.Field>
 
+            {errorMessage && (
+              <div className='text-sm text-destructive p-8 border border-destructive rounded-md'>
+                {errorMessage}
+              </div>
+            )}
+
             <Button
               type='submit'
               variant='outline'
-              className='w-full'
+              className='w-full disabled:opacity-50 disabled:animate-pulse'
               disabled={!form.state.canSubmit}
             >
               Acessar
