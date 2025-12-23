@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RoonsIndexRouteImport } from './routes/roons/index'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthCadastrarRouteImport } from './routes/auth/cadastrar'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RoonsIndexRoute = RoonsIndexRouteImport.update({
+  id: '/roons/',
+  path: '/roons/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
@@ -33,30 +39,34 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth/cadastrar': typeof AuthCadastrarRoute
   '/auth/login': typeof AuthLoginRoute
+  '/roons': typeof RoonsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth/cadastrar': typeof AuthCadastrarRoute
   '/auth/login': typeof AuthLoginRoute
+  '/roons': typeof RoonsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth/cadastrar': typeof AuthCadastrarRoute
   '/auth/login': typeof AuthLoginRoute
+  '/roons/': typeof RoonsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth/cadastrar' | '/auth/login'
+  fullPaths: '/' | '/auth/cadastrar' | '/auth/login' | '/roons'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth/cadastrar' | '/auth/login'
-  id: '__root__' | '/' | '/auth/cadastrar' | '/auth/login'
+  to: '/' | '/auth/cadastrar' | '/auth/login' | '/roons'
+  id: '__root__' | '/' | '/auth/cadastrar' | '/auth/login' | '/roons/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthCadastrarRoute: typeof AuthCadastrarRoute
   AuthLoginRoute: typeof AuthLoginRoute
+  RoonsIndexRoute: typeof RoonsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -66,6 +76,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/roons/': {
+      id: '/roons/'
+      path: '/roons'
+      fullPath: '/roons'
+      preLoaderRoute: typeof RoonsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/login': {
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthCadastrarRoute: AuthCadastrarRoute,
   AuthLoginRoute: AuthLoginRoute,
+  RoonsIndexRoute: RoonsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
